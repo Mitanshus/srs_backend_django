@@ -16,7 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 
+from srs_backend import cabin, company, location, reservation, seat, user, user_schedule
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/',user.urls),
+    path('company/',company.urls),
+    path('seat/',seat.urls),
+    path('userschedule/',user_schedule.urls),
+    path('location/',location.urls),
+    path('reservation/',reservation.urls),
+    path('cabin/',cabin.urls),
+
 ]
