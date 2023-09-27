@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 
-from srs_backend import location
+from srs_backend import company, location
 
 class Role(models.Model):
     id=models.UUIDField(default=uuid.uuid4,primary_key=True,auto_created=True)
@@ -18,6 +18,6 @@ class User(models.Model):
     min_days=models.IntegerField(null=True)
     max_days=models.IntegerField(null=True)
     role_id=models.ForeignKey(to=Role,on_delete=models.CASCADE)
-    company_id=models.ForeignKey(to="",on_delete=models.CASCADE)
-    added_by=models.ForeignKey(to="",on_delete=models.CASCADE)
+    company_id=models.ForeignKey(to=company.models,on_delete=models.CASCADE)
+    added_by=models.ForeignKey(to=Role,on_delete=models.CASCADE)
     is_forgot_password=models.BooleanField(default=False,null=True)
