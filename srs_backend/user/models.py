@@ -4,8 +4,8 @@ from django.db import models
 from srs_backend import location
 
 class Role(models.Model):
-    id:models.UUIDField(default=uuid.uuid4,primary_key=True,auto_created=True)
-    name:models.CharField(max_length=50)
+    id=models.UUIDField(default=uuid.uuid4,primary_key=True,auto_created=True)
+    name=models.CharField(max_length=50)
 # Create your models here.
 class User(models.Model):
     id=models.UUIDField(primary_key=True,auto_created=True,editable=False,default=uuid.uuid4)
