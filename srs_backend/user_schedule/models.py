@@ -17,6 +17,7 @@ class UserSchedule(models.Model):
     thursday = models.BooleanField(default=False)
     friday = models.BooleanField(default=False)
     saturday = models.BooleanField(default=False)
+    sunday = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.user_id.first_name + self.user_id.last_name
