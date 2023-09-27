@@ -8,4 +8,12 @@ class User(models.Model):
     last_name:models.CharField(null=False)
     email:models.EmailField(null=False,unique=True,max_length=254)
     password:models.CharField(null=False)
-    primary_location:models.
+    primary_location:models.ForeignKey(to="",on_delete=models.CASCADE)
+    is_activated:models.BooleanField(default=False)
+    min_days:models.IntegerField(null=True)
+    max_days:models.IntegerField(null=True)
+    role_id:models.ForeignKey(to="",on_delete=models.CASCADE)
+    company_id:models.ForeignKey(to="",on_delete=models.CASCADE)
+    added_by:models.ForeignKey(to="",on_delete=models.CASCADE)
+    is_forgot_password:models.BooleanField(default=False,null=True)
+
