@@ -10,8 +10,8 @@ class Status(models.TextChoices):
 class Seat(models.Model):
     id = models.UUIDField(primary_key=True, editable=False,
                           auto_created=True, default=uuid.uuid4)
-    status = models.CharField(choices=Status.choices,default="AVAILABLE")
-    cabin_id = models.ForeignKey(Cabin, on_delete=models.CASCADE, null=False)
+    status = models.CharField(choices=Status.choices,default="AVAILABLE",max_length=15)
+    cabin_id = models.ForeignKey(to=Cabin, on_delete=models.CASCADE, null=False)
     code = models.CharField(max_length=50, null=False)
 
     def __str__(self) -> str:
