@@ -10,20 +10,28 @@ from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import  permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework import generics
+from django.views.decorators.csrf import csrf_exempt  # Import the csrf_exempt decorator
+
+# Your other imports...
+
+
 
 
 # Create your views here.
 
-class user_login(APIView):
-     @permission_classes([AllowAny])
+#@csrf_exempt
+class user_login(generics.GenericAPIView):
+     
      def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
-        print(email, password)
+        print('^^^^^^^^^^^^^^^^^^^^^^^^email and password^^^^^^^^^^^^^^^^^^^^^^',email, password)
 
         # Authenticate the user
-        user = authenticate(request, email=email, password=password)
-        print(user)
+        user = authenticate( username=email, password=password)
+        
+        print('^^^^^^^^^^^^^^^^^^^^^^^^coming here^^^^^^^^^^^^^^^^^^^^^^',user)
 
         if user is not None:
             if user.is_active:
