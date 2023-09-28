@@ -1,48 +1,84 @@
 from imaplib import _Authenticator
+from rest_framework.response import Response
 from tokenize import generate_tokens
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
-from user.serializer import UserSerializer
+from .models import Role,User
+from user.serializer import UserSerializer,RoleSerializer
+from rest_framework import status
+from django.contrib.auth import authenticate, login
+from rest_framework.decorators import  permission_classes
+from rest_framework.permissions import AllowAny
+
+
 # Create your views here.
+
 class user_login(APIView):
-    def post(self, request, *args, **kwargs) :
-        try:
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            
-            user = _Authenticator(request, email=email, password=password)
-            
-            if user is None:
-                return JsonResponse({'message': 'User does not exist'}, status=400)
-            
-            if not user.is_activated:
-                return JsonResponse({'message': 'You have not set a password yet. Please check your email for instructions on how to set a password.'}, status=401)
-            
-            token = generate_tokens(user)
-            payload = {
-                'role_name': user.role.name,
-                'id': user.id,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'primary_location': user.primary_location,
-                'role_id': user.role_id,
-                'company_id': user.company_id,
-                'location': user.location
-            }
-            
-            return JsonResponse({'message': 'Logged in successfully', 'token': token, 'data': payload}, status=200)
-        
-        except Exception as e:
-            print('Error logging:', e)
-            return JsonResponse({'error': 'Internal server error'}, status=500)
+     @permission_classes([AllowAny])
+     def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        print(email, password)
+
+        # Authenticate the user
+        user = authenticate(request, email=email, password=password)
+        print(user)
+
+        if user is not None:
+            if user.is_active:
+                # Log the user in
+                login(request, user)
+
+                # Create the payload
+                payload = {
+                    # 'role_name': user.role.name,
+                    'id': user.id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email,
+                    'primary_location': user.primary_location.id,
+                    'role_id': user.role_id.id,
+                    'company_id': user.company_id.id,
+                    'location': user.primary_location.name
+                }
+
+                return Response(payload, status=status.HTTP_200_OK)  # Return a valid response
+            else:
+                return Response({'message': 'Account is not activated'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
         
 
 class create_user(APIView):
     def post(self, request, *args, **kwargs):
-        serializer=UserSerializer(request.data)
+        serializer=UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors)
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+class view_all_users(APIView):
+    def get(self, request, *args, **kwargs):
+        roles = User.objects.all()  # Retrieve all roles from the database
+        serializer = UserSerializer(roles, many=True)  # Serialize the roles
+        return Response(serializer.data)
+        
+
+class view_all_roles(APIView):
+    def get(self, request, *args, **kwargs):
+        roles = Role.objects.all()  # Retrieve all roles from the database
+        serializer = RoleSerializer(roles, many=True)  # Serialize the roles
+        return Response(serializer.data)
+        
+
+    
+class create_role(APIView):
+    def post(self, request):
+        serializer = RoleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
