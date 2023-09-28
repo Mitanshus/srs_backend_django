@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 
-from.views import create_company,view_all_company
+from .views import create_company, view_all_company, delete_company
 
 urlpatterns = [
-    path('create/',create_company.as_view()),
-    path('viewallcompany/',view_all_company.as_view())
+    path('create/', create_company.as_view()),
+    path('viewallcompany/', view_all_company.as_view()),
+    path('delete/', delete_company.as_view())
 ]
