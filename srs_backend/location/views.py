@@ -43,9 +43,9 @@ class LocationByCompanyView(generics.ListAPIView):
             # Create a list of location data, assuming Location has a 'serialize' method
             location_data = [location.serialize() for location in locations]
 
-            return JsonResponse({'data': location_data}, status=200)
+            return Response({'data': location_data}, status=200)
 
         except Exception as error:
             print('Error getting locations by company:', error)
-            return JsonResponse({'error': 'Internal server error'}, status=500)
+            return Response({'error': 'Internal server error'}, status=500)
         

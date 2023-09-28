@@ -5,6 +5,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import Role,User
+from company.models import Company
+from user_schedule.models import UserSchedule
 from user.serializer import UserDeleteSerializer, UserSerializer,RoleSerializer
 from rest_framework import status
 from django.contrib.auth import authenticate, login
@@ -103,3 +105,29 @@ class create_role(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+class AllScheduleView(APIView):
+    def get(self, request):
+        try:
+            company_id = request.GET.get('company_id')
+            existing_company = Company.objects.filter(id=company_id).first()
+            
+            if not existing_company:
+                return Response({'message': 'Company not found'}, status=404)
+
+            schedules = UserSchedule.objects.filter(company_id=company_id).select_related('user')
+            
+            schedule_data = []
+            for schedule in schedules:
+                schedule_data.append({
+                    'user': {
+                        'first_name': schedule.user.first_name,
+                        'last_name': schedule.user.last_name,
+                    },
+                    # Add other schedule attributes as needed
+                })
+
+            return Response({'message': 'Schedule data fetched successfully', 'data': schedule_data}, status=200)
+
+        except Exception as error:
+            print('Error getting Schedules:', error)
+            return JsonResponse({'error': 'Internal server error'}, status=500)
