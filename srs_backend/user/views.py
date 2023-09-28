@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .models import Role,User
-from user.serializer import UserSerializer,RoleSerializer
+from user.serializer import UserDeleteSerializer, UserSerializer,RoleSerializer
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import  permission_classes
@@ -65,6 +65,16 @@ class create_user(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+    
+    def delete(self, request, pk):
+        serializer = UserDeleteSerializer(data={'id': pk})
+        if serializer.is_valid():
+            user_id = serializer.validated_data['id']
+            user = User.objects.get(pk=user_id)
+            user.delete()
+            return Response({'message': 'User Deleted'},status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class view_all_users(APIView):

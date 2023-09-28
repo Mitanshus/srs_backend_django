@@ -25,3 +25,17 @@ class RoleSerializer(serializers.ModelSerializer):
 
     def create(self,validated_data):
         return Role.objects.create(**validated_data)
+    
+
+class UserDeleteSerializer(serializers.Serializer):
+    id = serializers.UUIDField()
+
+    def validate_id(self, value):
+        """
+        Check if the user with the provided ID exists in the database.
+        """
+        try:
+            user = User.objects.get(pk=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with this ID does not exist.")
+        return value

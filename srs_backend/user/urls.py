@@ -8,4 +8,5 @@ urlpatterns = [
     path('viewallroles/',view_all_roles.as_view()),
     path('viewallusers/',view_all_users.as_view()),
     path('login/',user_login.as_view()),
+    path('delete/<uuid:pk>/',create_user.as_view()),
 ]
