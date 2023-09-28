@@ -19,9 +19,9 @@ class User(AbstractUser):
     is_activated=models.BooleanField(default=False,)
     min_days=models.IntegerField(null=True,)
     max_days=models.IntegerField(null=True,)
-    role_id=models.ForeignKey(Role,related_name='rolesId',on_delete=models.CASCADE)
+    role_id=models.ForeignKey(Role,related_name='role_id',on_delete=models.CASCADE)
     company_id=models.ForeignKey(to=Company,on_delete=models.CASCADE)
-    added_by=models.ForeignKey(Role,related_name='addedBy',on_delete=models.CASCADE)
+    added_by=models.ForeignKey(Role,related_name='added_by',on_delete=models.CASCADE)
     is_forgot_password=models.BooleanField(default=False,null=True)
     username=None
     USERNAME_FIELD='email'
