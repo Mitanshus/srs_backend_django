@@ -4,10 +4,13 @@ from django.db import transaction
 
 
 class UserSerializer(serializers.ModelSerializer):
+    
+    role_name = serializers.CharField(source='role_id.name')  # Use source to access the role name
+
     class Meta:
         model=User
         fields='__all__'
-        read_only_fields = 'id',
+        read_only_fields =  ('id', 'role_name') 
 
     def create(self,validated_data):
         password=validated_data.pop('password',None)

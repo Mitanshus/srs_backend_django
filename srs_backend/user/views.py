@@ -39,19 +39,22 @@ class user_login(generics.GenericAPIView):
                 login(request, user)
 
                 # Create the payload
-                payload = {
-                    # 'role_name': user.role.name,
-                    'id': user.id,
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
-                    'email': user.email,
-                    'primary_location': user.primary_location.id,
-                    'role_id': user.role_id.id,
-                    'company_id': user.company_id.id,
-                    'location': user.primary_location.name
-                }
+                # payload = {
+                #     'role_name': user.role_name,
+                #     'id': user.id,
+                #     'first_name': user.first_name,
+                #     'last_name': user.last_name,
+                #     'email': user.email,
+                #     'primary_location': user.primary_location.id,
+                #     'role_id': user.role_id.id,
+                #     'company_id': user.company_id.id,
+                #     'location': user.primary_location.name
+                # }
+                userr = User.objects.get(email=email)
 
-                return Response(payload, status=status.HTTP_200_OK)  # Return a valid response
+                serializer = UserSerializer(userr)
+
+                return Response(serializer.data, status=status.HTTP_200_OK)  # Return a valid response
             else:
                 return Response({'message': 'Account is not activated'}, status=status.HTTP_400_BAD_REQUEST)
         else:
