@@ -25,8 +25,11 @@ SECRET_KEY = 'django-insecure-$wu2fk0(62b85^#_lq93w$#f0*muit&+ua7=2t+&em^%_(gq%y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+
+
+AUTH_USER_MODEL = 'user.User'  # Replace 'myapp' with the actual app name containing your User model
 
 # Application definition
 
