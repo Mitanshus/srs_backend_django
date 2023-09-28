@@ -1,4 +1,6 @@
+from django.http import JsonResponse
 from rest_framework.response import Response
+from rest_framework import generics
 from rest_framework.views import APIView
 from .serializer import LocationDeleteSerializer, LocationSerializer
 from .models import Locations
@@ -29,4 +31,21 @@ class view_all_location(APIView):
         roles = Locations.objects.all()  # Retrieve all roles from the database
         serializer =LocationSerializer(roles, many=True)  # Serialize the roles
         return Response(serializer.data)
+    
+class LocationByCompanyView(generics.ListAPIView):
+    serializer_class = LocationSerializer
+
+    def get(self, request, company_id):
+        try:
+            # Use the 'company_id' parameter to filter locations by company
+            locations = Locations.objects.filter(company_id=company_id)
+
+            # Create a list of location data, assuming Location has a 'serialize' method
+            location_data = [location.serialize() for location in locations]
+
+            return JsonResponse({'data': location_data}, status=200)
+
+        except Exception as error:
+            print('Error getting locations by company:', error)
+            return JsonResponse({'error': 'Internal server error'}, status=500)
         

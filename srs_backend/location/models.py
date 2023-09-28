@@ -11,3 +11,14 @@ class Locations(models.Model):
     max_days=models.IntegerField(null=False)
     max_pre_booking_time=models.IntegerField(null=False)
     max_duration=models.IntegerField(null=False)
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'code': self.code,
+            'company_id': self.company_id.name,
+            'min_days': self.min_days,
+            'max_days':self.max_days,
+            'max_pre_booking_time':self.max_pre_booking_time,
+            'max_duration':self.max_duration            
+        }
