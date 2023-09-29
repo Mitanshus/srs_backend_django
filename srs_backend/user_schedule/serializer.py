@@ -9,4 +9,4 @@ class user_schedule_serializer (serializers.ModelSerializer):
         read_only_fields = 'id',
 
     def create(self, validated_data):
-        return UserSchedule.objects.create(validated_data)
+        return UserSchedule.objects.create(**validated_data)

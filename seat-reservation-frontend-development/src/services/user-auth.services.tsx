@@ -368,7 +368,7 @@ export const getAllSchedules = async (company_id: any) => {
 	//const token = localStorage.getItem("token");
 	try {
 		const response = await axios.get(
-			`${URL}user/getAllSchedule?company_id=${company_id}`,
+			`${URL}userschedule/viewallschedule/?company_id=${company_id}`,
 			{
 				headers: {
 					"Content-Type": "application/json",
@@ -503,7 +503,7 @@ export const getAllUserSchedules = async (company_id: any, user_id: any) => {
 	//const token = localStorage.getItem("token");
 	try {
 		const response = await axios.get(
-			`${URL}user/getSchedule?company_id=${company_id}&user_id=${user_id}`,
+			`${URL}userschedule/viewallschedule/?company_id=${company_id}&user_id=${user_id}`,
 			{
 				headers: {
 					"Content-Type": "application/json",

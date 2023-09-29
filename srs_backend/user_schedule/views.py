@@ -18,16 +18,26 @@ class user_schedule_view(APIView):
 
 class view_all_user_schedule (APIView):
     def get(self, request, *args, **kwargs):
-        user_schedule = UserSchedule.objects.all()
+        company_id = request.query_params.get('company_id')
+        user_id = request.query_params.get('user_id')
+        if company_id:
+            user_schedule = UserSchedule.objects.filter(company_id=company_id)
+        elif user_id:
+            user_schedule = UserSchedule.objects.filter(user_id=user_id)
+        elif user_id and company_id:
+            user_schedule = UserSchedule.objects.filter(
+                company_id=company_id, user_id=user_id)
+        else:
+            user_schedule = UserSchedule.objects.all()
         serializer = user_schedule_serializer(user_schedule, many=True)
-        return Response(serializer.data)
+        return Response({"data":serializer.data})
 
 
 class delete_user_schedule(APIView):
     def delete(self, request):
-        user_scehdule_id = request.query_params.get('user_schedule_id')
+        user_schedule_id = request.query_params.get('user_schedule_id')
         try:
-            user_schedule = UserSchedule.objects.get(id=user_scehdule_id)
+            user_schedule = UserSchedule.objects.get(id=user_schedule_id)
             user_schedule.delete()
             return Response({"message": "Deleted successfully!"}, status=status.HTTP_204_NO_CONTENT)
         except UserSchedule.DoesNotExist:
