@@ -124,21 +124,18 @@ class DashboardSeatsView(APIView):
                 return Response({'message': 'Location not found'}, status=404)
 
             booked_reservations = Reservations.objects.filter(
-                Q(reservation_start_date__lte=cur_datetime, reservation_end_date__gte=cur_datetime),
-                status='BOOKED'
-            ).values_list('seat_id', flat=True)
+            Q(reservation_start_date__lte=cur_datetime, reservation_end_date__gte=cur_datetime),status='BOOKED').values_list('seat', flat=True) # Update 'seat_id' to 'seat__cabin'
 
-            available_seats = Seat.objects.filter(
-                cabin__location_id=location_id
-            ).select_related('cabin').values('cabin__id', 'cabin__location_id', 'cabin__name', 'cabin__code', 'id', 'status', 'cabin_id', 'code')
+            available_seats = Seat.objects.filter(cabin_id__location_id=location_id).values('cabin_id__location_id', 'cabin_id__name', 'cabin_id__code', 'id', 'status', 'cabin_id', 'code')
+
 
             cabins_with_seats = {}
             for seat in available_seats:
-                cabin_id = seat['cabin__id']
+                cabin_id = seat['cabin']
                 if cabin_id not in cabins_with_seats:
                     cabins_with_seats[cabin_id] = {
                         'Cabin': {
-                            'id': seat['cabin__id'],
+                            'id': seat['cabin'],
                             'location_id': seat['cabin__location_id'],
                             'name': seat['cabin__name'],
                             'code': seat['cabin__code'],
@@ -148,7 +145,7 @@ class DashboardSeatsView(APIView):
                 cabins_with_seats[cabin_id]['Seats'].append({
                     'id': seat['id'],
                     'status': seat['status'],
-                    'cabin_id': seat['cabin_id'],
+                    'cabin_id': seat['cabin'],
                     'code': seat['code'],
                     'isBooked': seat['id'] in booked_reservations,
                     'isReserved': seat['status'] == 'RESERVED',
@@ -165,4 +162,4 @@ class DashboardSeatsView(APIView):
 
         except Exception as error:
             print('Error getting available seats:', error)
-            return Response({'error': 'Inteal server error'}, status=403)
+            return Response({'error': 'Internal server error'}, status=500)  # Update status code to 500 for internal server error

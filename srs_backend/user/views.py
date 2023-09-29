@@ -84,10 +84,17 @@ class create_user(APIView):
 
 class view_all_users(APIView):
     def get(self, request, *args, **kwargs):
-        roles = User.objects.all()  # Retrieve all roles from the database
-        serializer = UserSerializer(roles, many=True)  # Serialize the roles
-        return Response(serializer.data)
-        
+        # Check if a query parameter called 'company_id' is provided
+        company_id = request.GET.get('company_id')
+
+        # If 'company_id' parameter is provided, filter the queryset by 'company_id'
+        if company_id:
+            users = User.objects.filter(company_id=company_id)
+        else:
+            users = User.objects.all()  # Retrieve all users
+
+        serializer = UserSerializer(users, many=True)  # Serialize the users
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 class view_all_roles(APIView):
     def get(self, request, *args, **kwargs):
