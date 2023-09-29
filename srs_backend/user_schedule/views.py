@@ -1,3 +1,34 @@
 from django.shortcuts import render
-
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from user_schedule.serializer import user_schedule_serializer
+from user_schedule.models import UserSchedule
 # Create your views here.
+
+
+class user_schedule_view(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = user_schedule_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+
+class view_all_user_schedule (APIView):
+    def get(self, request, *args, **kwargs):
+        user_schedule = UserSchedule.objects.all()
+        serializer = user_schedule_serializer(user_schedule, many=True)
+        return Response(serializer.data)
+
+
+class delete_user_schedule(APIView):
+    def delete(self, request):
+        user_scehdule_id = request.query_params.get('user_schedule_id')
+        try:
+            user_schedule = UserSchedule.objects.get(id=user_scehdule_id)
+            user_schedule.delete()
+            return Response({"message": "Deleted successfully!"}, status=status.HTTP_204_NO_CONTENT)
+        except UserSchedule.DoesNotExist:
+            return Response({"message": "Schedule Not Found !"}, status=status.HTTP_404_NOT_FOUND)
