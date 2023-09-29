@@ -104,7 +104,7 @@ class AvailableSeatsView(APIView):
 class DashboardSeatsView(APIView):
     def get(self, request):
         try:
-            # Access query parameters from request.GET
+            # Access query parameters 
             company_id = request.GET.get('company_id')
             location_id = request.GET.get('location_id')
 
@@ -113,53 +113,62 @@ class DashboardSeatsView(APIView):
 
             cur_datetime = datetime.now()
 
-            # Find the company
+            # Find company and location
             existing_company = Company.objects.filter(id=company_id).first()
             if not existing_company:
                 return Response({'message': 'Company not found'}, status=404)
 
-            # Find the location
             existing_location = Locations.objects.filter(id=location_id).first()
             if not existing_location:
                 return Response({'message': 'Location not found'}, status=404)
 
+            # Get booked reservations
             booked_reservations = Reservations.objects.filter(
-            Q(reservation_start_date__lte=cur_datetime, reservation_end_date__gte=cur_datetime),status='BOOKED').values_list('seat', flat=True) # Update 'seat_id' to 'seat__cabin'
+                reservation_start_date__lte=cur_datetime, 
+                reservation_end_date__gte=cur_datetime,
+                status='BOOKED'
+            ).values_list('seat_id', flat=True)
 
-            available_seats = Seat.objects.filter(cabin_id__location_id=location_id).values('cabin_id__location_id', 'cabin_id__name', 'cabin_id__code', 'id', 'status', 'cabin_id', 'code')
-
-
+            # Get available seats
+            available_seats = Seat.objects.filter(cabin__location_id=location_id).values(
+                'cabin__id', 
+                'cabin__location_id',
+                'cabin__name', 
+                'cabin__code', 
+                'id', 
+                'status', 
+                'cabin__id', 
+                'code'
+            )
+            
+            # Structure response
             cabins_with_seats = {}
             for seat in available_seats:
-                cabin_id = seat['cabin']
+                cabin_id = seat['cabin__id']
                 if cabin_id not in cabins_with_seats:
                     cabins_with_seats[cabin_id] = {
                         'Cabin': {
-                            'id': seat['cabin'],
+                            'id': seat['cabin__id'],
                             'location_id': seat['cabin__location_id'],
                             'name': seat['cabin__name'],
-                            'code': seat['cabin__code'],
+                            'code': seat['cabin__code']
                         },
-                        'Seats': [],
+                        'Seats': []
                     }
+                
                 cabins_with_seats[cabin_id]['Seats'].append({
                     'id': seat['id'],
                     'status': seat['status'],
-                    'cabin_id': seat['cabin'],
+                    'cabin_id': seat['cabin__id'],
                     'code': seat['code'],
                     'isBooked': seat['id'] in booked_reservations,
-                    'isReserved': seat['status'] == 'RESERVED',
+                    'isReserved': seat['status'] == 'RESERVED' 
                 })
 
-            for cabin in cabins_with_seats.values():
-                for seat in cabin['Seats']:
-                    if seat['status'] == 'RESERVED':
-                        seat['isReserved'] = True
-
             result = list(cabins_with_seats.values())
-
+            
             return Response({'message': 'Available seats fetched successfully', 'data': result}, status=200)
 
         except Exception as error:
             print('Error getting available seats:', error)
-            return Response({'error': 'Internal server error'}, status=500)  # Update status code to 500 for internal server error
+            return Response({'error': 'Internal server error'}, status=500)
