@@ -151,13 +151,15 @@ export const getAllLocations = async ({
 }) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.get(`${URL}location/company/${company_id}/`, {
+		const response = await axios.get(`http://localhost:8000/location/viewalllocation/?company_id=${company_id}`, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,
 			},
 		});
 		const { data } = await response.data;
+		console.log(response.data);
+		
 		return data;
 	} catch (error: any) {
 		console.log("Error fetching locations:", error);
@@ -389,7 +391,7 @@ export const getAllSchedules = async (company_id: any) => {
 export const addSchedule = async (data: any) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.post(`${URL}user/addSchedule`, data, {
+		const response = await axios.post(`${URL}userschedule/create/`, data, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,

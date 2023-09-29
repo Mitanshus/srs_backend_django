@@ -9,29 +9,35 @@ from rest_framework import status
 
 class location(APIView):
     def post(self, request, *args, **kwargs):
-        serializer=LocationSerializer(data=request.data)
+        serializer = LocationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
-    
+
     def delete(self, request, pk):
         serializer = LocationDeleteSerializer(data={'id': pk})
         if serializer.is_valid():
             user_id = serializer.validated_data['id']
             user = Locations.objects.get(pk=user_id)
             user.delete()
-            return Response({'message': 'location  Deleted'},status=status.HTTP_204_NO_CONTENT)
+            return Response({'message': 'location  Deleted'}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class view_all_location(APIView):
     def get(self, request, *args, **kwargs):
-        roles = Locations.objects.all()  # Retrieve all roles from the database
-        serializer =LocationSerializer(roles, many=True)  # Serialize the roles
-        return Response(serializer.data)
-    
+        company_id = request.query_params.get('company_id')
+        if company_id:
+            location = Locations.objects.filter(company_id=company_id)
+        else:
+            location = Locations.objects.all()  # Retrieve all roles from the database
+        serializer = LocationSerializer(
+            location, many=True)  # Serialize the roles
+        return Response({"data": serializer.data})
+
+
 class LocationByCompanyView(generics.ListAPIView):
     serializer_class = LocationSerializer
 
@@ -48,4 +54,3 @@ class LocationByCompanyView(generics.ListAPIView):
         except Exception as error:
             print('Error getting locations by company:', error)
             return Response({'error': 'Internal server error'}, status=500)
-        

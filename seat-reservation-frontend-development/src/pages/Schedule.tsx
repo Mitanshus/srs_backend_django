@@ -453,10 +453,12 @@ const Schedule = () => {
     try {
       setIsLoading(false);
       const response = await usersWithoutSchedule({ company_id });
-      if (response.success == true) {
+      console.log(response);
+      if (response) {
         setHasSchedule(true);
-        setUserWithoutSchedule(response.users);
-      } else if (response.success == false) {
+        
+        setUserWithoutSchedule(response.data);
+      } else {
         setHasSchedule(false);
       }
     } catch (error) {
@@ -499,7 +501,8 @@ const Schedule = () => {
     try {
       setIsLoading(true);
       const scheduleResponse = await getAllSchedules(company_id);
-      const scheduleData = scheduleResponse.map((item: any) => {
+      
+      const scheduleData = scheduleResponse?.map((item: any) => {
         const {
           id,
           user_id,
@@ -510,10 +513,12 @@ const Schedule = () => {
           friday,
           saturday,
           sunday,
-          User,
+          first_name,
+          last_name
         } = item;
+        
         const name =
-          `${User.first_name} ${User.last_name}` +
+          `${first_name} ${last_name}` +
           (user_id === userId ? " (You)" : "");
         let total_days =
           monday + tuesday + wednesday + thursday + friday + saturday + sunday;

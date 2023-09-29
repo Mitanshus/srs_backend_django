@@ -99,18 +99,21 @@ const Cabins = () => {
   const fetchData = async (location_id: string) => {
     try {
       setIsLoading(true);
-
+      console.log(location_id);
+      
       const cabins = await getCabins(location_id);
-      const sortCabins = cabins.sort((a: any, b: any) =>
+      const sortCabins = cabins?.sort((a: any, b: any) =>
         a.code.localeCompare(b.code)
       );
-
-      setCabins(sortCabins);
 
       const locations = await getAllLocations({
         company_id,
       });
+      console.log(locations);
+      
       setLocation(locations);
+      setCabins(sortCabins);
+
       setIsLoading(false);
     } catch (error) {
       console.log("Error getting cabins data from fetchData:", error);
@@ -121,7 +124,7 @@ const Cabins = () => {
   useEffect(() => {
     // Load cabin data from DB when the component mounts
     setIsLoading(true);
-    fetchData(selectedLocation.id);
+    fetchData(selectedLocation?.id);
     if (editMode && selectedCabinData) {
       setNumberOfSeats(selectedCabinData.Seats.length);
     } else {
@@ -376,6 +379,7 @@ const Cabins = () => {
       console.log(error);
     }
   };
+console.log(selectedLocation);
 
   return (
     <>

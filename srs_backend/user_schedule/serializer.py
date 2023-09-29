@@ -10,7 +10,7 @@ class user_schedule_serializer (serializers.ModelSerializer):
 
     class Meta:
         model = UserSchedule
-        fields = ['id','user_id','company_id','monday','tuesday','wednesday','thursday','saturday','sunday','first_name','last_name']
+        fields = ['id','user_id','company_id','monday','tuesday','wednesday','friday','thursday','saturday','sunday','first_name','last_name']
         read_only_fields = 'id',
 
     def create(self, validated_data):

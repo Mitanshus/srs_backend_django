@@ -18,7 +18,11 @@ class create_cabin(APIView):
 
 class view_all_cabins(APIView):
     def get(self, request, *args, **kwargs):
-        cabin = Cabin.objects.all()
+        location_id = request.query_params.get('location_id')
+        if location_id:
+            cabin = Cabin.objects.filter(location_id=location_id)
+        else:
+            cabin = Cabin.objects.all()
         serializer = cabin_serializer(cabin, many=True)
         return Response(serializer.data)
 

@@ -21,7 +21,7 @@ export const getCabins = async (location_id: string) => {
     //const token = localStorage.getItem("token");
     try {
         const res = await axios.get(
-            `${URL}admin/getAllCabins?location_id=${location_id}`,
+            `http://localhost:8000/cabin/viewallcabin/?location_id=${location_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',

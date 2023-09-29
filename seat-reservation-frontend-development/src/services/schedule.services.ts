@@ -8,7 +8,7 @@ export const usersWithoutSchedule = async ({ company_id }: { company_id: string 
     //const token = localStorage.getItem("token");
     try {
         const response = await axios.get(
-            `${URL}admin/without-schedule?company_id=${company_id}`,
+            `http://localhost:8000/userschedule/viewnonschedule/?company_id=${company_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -16,6 +16,8 @@ export const usersWithoutSchedule = async ({ company_id }: { company_id: string 
                 },
             }
         );
+        
+        
         return await response.data;
 
     } catch (error: any) {
