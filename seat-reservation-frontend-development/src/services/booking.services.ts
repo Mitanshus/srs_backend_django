@@ -60,7 +60,7 @@ export const getAllBookings = async (data: any) => {
     const { company_id, location_id, user_id } = data;
     try {
         const response = await axios.get(
-            `${URL}booking/?company_id=${company_id}&location_id=${location_id}&user_id=${user_id}`,
+            `${URL}reservation/booking/?company_id=${company_id}&location_id=${location_id}&user_id=${user_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -130,7 +130,7 @@ export const getOccupiedStatus = async (data: any) => {
     //const token = localStorage.getItem('token');
     try {
 
-        const response = await axios.post(`${URL}booking/confirm-presence`, data, {
+        const response = await axios.post(`${URL}reservation/confirmpresence/`, data, {
             headers: {
                 "Content-Type": "application/json",
                 //Authorization: token,: token,

@@ -5,10 +5,13 @@ from django.db.models import Q
 from company.models import Company
 from reservation.models import Reservations
 from seat.models import Seat
+from user.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from reservation.models import Reservations
+
+from reservation.models import Reservations,Confirmreservation
+from django.shortcuts import get_object_or_404
 from reservation.serializer import reservation_serializer
 from datetime import datetime# Create your views here.
 
@@ -179,4 +182,75 @@ class DashboardSeatsView(APIView):
 
         except Exception as error:
             print('Error getting available seats:', error)
+            return Response({'error': 'Internal server error'}, status=500)
+        
+
+class GetAllBookingsView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            user_id = request.GET.get('user_id')
+            company_id = request.GET.get('company_id')
+            location_id = request.GET.get('location_id')
+
+            existing_user = get_object_or_404(User, id=user_id, company_id=company_id)
+
+            bookings = Reservations.objects.filter(
+                user_id=user_id,
+                seat_id__cabin__location_id=location_id
+            ).select_related('seat_id__cabin')
+
+            data = [
+                {
+                    'id': booking.id,
+                    'seat': {
+                        'code': booking.seat.code,
+                        'cabin': {
+                            'id': booking.seat.cabin.id,
+                            'name': booking.seat.cabin.name,
+                            'code': booking.seat.cabin.code,
+                            'location_id': booking.seat.cabin.location_id,
+                        }
+                    }
+                }
+                for booking in bookings
+            ]
+
+            return Response({'message': 'Bookings fetched successfully', 'data': data}, status=200)
+
+        except Exception as err:
+            print('Error while fetching Booking Data:', err)
+            return Response({'error': 'Internal server error'}, status=500)
+        
+class ConfirmPresenceBtnView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            user_id = request.POST.get('user_id')
+            cur_datetime = datetime.now().strftime('%Y-%m-%d')
+            cur_date = cur_datetime.split(' ')[0]
+
+            existing_reservation = Reservations.objects.filter(
+                Q(reservation_start_date__lte=cur_datetime) &
+                Q(reservation_end_date__gte=cur_datetime) &
+                Q(user_id=user_id) &
+                Q(status='BOOKED')
+            )
+
+            if not existing_reservation.exists():
+                return Response({'message': 'No Reservation found for current time.', 'isFound': False}, status=404)
+
+            reservation_id = existing_reservation[0].id
+
+            existing_confirmation = Confirmreservation.objects.filter(
+                Q(reservation_id=reservation_id) &
+                Q(date__date=cur_date) &
+                Q(present=True)
+            )
+
+            if existing_confirmation.exists():
+                return Response({'message': 'Seat already confirmed for selected booking', 'isPresent': True}, status=200)
+            else:
+                return Response({'isPresent': False}, status=200)
+
+        except Exception as e:
+            print('Error while handling confirm presence button:', e)
             return Response({'error': 'Internal server error'}, status=500)

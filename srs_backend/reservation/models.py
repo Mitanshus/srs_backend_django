@@ -22,3 +22,9 @@ class Reservations(models.Model):
     reservation_end_date=models.DateField(null=False)
     status=models.CharField(max_length= 10,choices=BookingStatus.choices)
     approval_status=models.CharField(max_length=10,choices=ApprovalStatus.choices)
+
+class Confirmreservation(models.Model):
+    id=models.UUIDField(default=uuid.uuid4,primary_key=True,auto_created=True)
+    date=models.DateField(null=False,)
+    reservation=models.ForeignKey(to=Reservations,on_delete=models.CASCADE)
+    present=models.BooleanField(default=False,null=False)
