@@ -1,4 +1,4 @@
-seat-reservation-frontend-development
+# seat-reservation-frontend-development
 *.sqlite3
 venv
 __pycache__
