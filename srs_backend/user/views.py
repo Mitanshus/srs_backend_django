@@ -56,7 +56,7 @@ class user_login(generics.GenericAPIView):
 
                 serializer = UserSerializer(userr)
 
-                return Response(serializer.data, status=status.HTTP_200_OK)  # Return a valid response
+                return Response({"data":serializer.data}, status=status.HTTP_200_OK)  # Return a valid response
             else:
                 return Response({'message': 'Account is not activated'}, status=status.HTTP_400_BAD_REQUEST)
         else:

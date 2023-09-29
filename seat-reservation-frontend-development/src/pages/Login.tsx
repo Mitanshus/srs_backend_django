@@ -72,15 +72,15 @@ const Login = () => {
 				});
 				dispatch(
 					setUserDetail({
-						id: userdata?.id,
-						first_name: userdata?.first_name,
-						last_name: userdata?.last_name,
-						email: userdata?.email,
-						primary_location: userdata?.primary_location,
-						role_id: userdata?.role_id,
-						company_id: userdata?.company_id,
-						role_name: userdata?.role_name,
-						location: userdata?.location,
+						id: userdata.data?.id,
+						first_name: userdata.data?.first_name,
+						last_name: userdata.data?.last_name,
+						email: userdata.data?.email,
+						primary_location: userdata.data?.primary_location,
+						role_id: userdata.data?.role_id,
+						company_id: userdata.data?.company_id,
+						role_name: userdata.data?.role_name,
+						location: userdata.data?.location,
 					})
 				);
 				dispatch(setToken("loggedIn"));
