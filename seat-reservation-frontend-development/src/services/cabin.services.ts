@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { showWarningToast } from "../assets/toastify";
 
-var URL = import.meta.env.VITE_REACT_API_URL;
+var URL = 'http://localhost:8000/';
 
 export interface cabinDataType {
     location_id: string;
@@ -43,7 +43,7 @@ export const addCabin = async (cabinData: cabinDataType, ) => {
     //const token = localStorage.getItem("token");
     try {
         const res = await axios.post(
-            `${URL}admin/addCabin`, cabinData,
+            `${URL}cabin/create/`, cabinData,
             {
                 headers: {
                     "Content-Type": "application/json",
