@@ -87,6 +87,7 @@ const Login = () => {
 				dispatch(setIsLoggedIn(true));
 				localStorage.setItem("userData", JSON.stringify(data));
 				localStorage.setItem("token", token);
+				localStorage.setItem('location',data.location)
 				navigate("/dashboard");
 			}
 		} catch (error) {

@@ -64,17 +64,19 @@ interface Location {
 }
 
 const Cabins = () => {
-  const { location: locationData, company_id } = useAppSelector(
+  const { location : locationData, company_id } = useAppSelector(
     (state) => state.user
   );
-
+    console.log( useAppSelector(
+      (state) => state.user));
+    
   const [cabins, setCabins] = useState<Cabin[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [location, setLocation] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<Location | any>(
-    locationData
+    locationData || localStorage.getItem('location')
   );
   const [selectedCabinData, setSelectedCabinData] = useState<Cabin | null>(
     null
@@ -514,7 +516,7 @@ console.log(selectedLocation);
 
                   }}
                 >
-                  {cabins.map((cabin) => (
+                  {cabins?.map((cabin) => (
                     <Box
                       key={cabin.id}
                       sx={{

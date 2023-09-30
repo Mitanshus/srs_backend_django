@@ -28,6 +28,10 @@ const initialState: UserState = localStorageUserData
 			role_id: "",
 			company_id: "",
 			role_name: "",
+			location : {
+				id : "",
+				name : ""
+			}
 	  };
 
 const userSlice = createSlice({
