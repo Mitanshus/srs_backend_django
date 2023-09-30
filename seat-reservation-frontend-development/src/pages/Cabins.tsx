@@ -104,6 +104,7 @@ const Cabins = () => {
       console.log(location_id);
       
       const cabins = await getCabins(location_id);
+      
       const sortCabins = cabins?.sort((a: any, b: any) =>
         a.code.localeCompare(b.code)
       );
@@ -566,7 +567,7 @@ console.log(selectedLocation);
                           }}
                         >
                           {cabin.name} - {cabin.code} <br />
-                          {cabin.Seats.length} Seater
+                          {cabin.Seats?.length} Seater
                         </Typography>
                       </Card>
                       <Tooltip title="Add/Delete Seats">
