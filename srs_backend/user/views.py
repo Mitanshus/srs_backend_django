@@ -89,10 +89,13 @@ class view_all_users(APIView):
     def get(self, request, *args, **kwargs):
         # Check if a query parameter called 'company_id' is provided
         company_id = request.GET.get('company_id')
+        user_id=request.GET.get('user_id')
 
         # If 'company_id' parameter is provided, filter the queryset by 'company_id'
         if company_id:
             users = User.objects.filter(company_id=company_id)
+        elif user_id:
+            users=User.objects.filter(id=user_id)
         else:
             users = User.objects.all()  # Retrieve all users
 
@@ -141,3 +144,26 @@ class AllScheduleView(APIView):
         except Exception as error:
             print('Error getting Schedules:', error)
             return JsonResponse({'error': 'Internal server error'}, status=500)
+        
+
+class view_profile(APIView):
+    def get(self, request, *args, **kwargs):
+        # Check if a query parameter called 'company_id' is provided
+       
+        user_id=request.GET.get('user_id')
+
+        # If 'company_id' parameter is provided, filter the queryset by 'company_id'
+       
+       
+        users=User.objects.get(id=user_id)
+        payload= {
+            'first_name': users.first_name,
+            'last_name': users.last_name,
+            'email': users.email,
+            'location': users.primary_location.name,
+            'min_days': users.min_days,
+            'max_days': users.max_days,
+            'role': users.role_id.name
+            }
+        # serializer = UserSerializer(payload, many=True)  # Serialize the users
+        return Response(payload, status=status.HTTP_200_OK)
