@@ -350,7 +350,7 @@ export const editLocation = async (data: any) => {
 export const addLocation = async (location: any) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.post(`${URL}location/add`, location, {
+		const response = await axios.post(`${URL}location/create/`, location, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,
@@ -606,7 +606,7 @@ export const checkForgotPassword = async ({ token }: { token: string }) => {
 export const getProfile = async ({ id }: { id: string }) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.get(`${URL}user/getProfile?id=${id}`, {
+		const response = await axios.get(`${URL}user/profile/?user_id=${id}`, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,
