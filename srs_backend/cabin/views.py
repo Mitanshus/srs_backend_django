@@ -24,7 +24,7 @@ class view_all_cabins(APIView):
         else:
             cabin = Cabin.objects.all()
         serializer = cabin_serializer(cabin, many=True)
-        return Response(serializer.data)
+        return Response({"data":serializer.data})
 
 
 class delete_cabin(APIView):
