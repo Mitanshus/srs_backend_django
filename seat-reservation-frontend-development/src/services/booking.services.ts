@@ -9,7 +9,7 @@ export const checkAvailability = async (data: any) => {
     //const token = localStorage.getItem('token');
     try {
         const response = await axios.get(
-            `${URL}reservation/avail-seats/${company_id}/${location_id}/${start_date}/${end_date}`,
+            `${URL}reservation/availseats/${company_id}/${location_id}/${start_date}/${end_date}/`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -17,6 +17,7 @@ export const checkAvailability = async (data: any) => {
                 },
             }
         );
+        console.log(response.data.data)
         return response.data.data;
     } catch (error: any) {
         // Handle error here
