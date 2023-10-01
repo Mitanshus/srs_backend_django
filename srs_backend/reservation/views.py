@@ -63,24 +63,47 @@ class AvailableSeatsView(APIView):
         ).select_related('cabin')
         
         cabins = {}
+        
         for seat in seats:
             cabin = seat.cabin
             
             if cabin.id not in cabins:
                 cabins[cabin.id] = {
-                    'cabin': cabin_serializer(cabin).data,
-                    'seats': []    
+                   'id': cabin.id,  
+                   'locationId': cabin.location_id.id,
+                   'cabinName': cabin.name,
+                   'cabinCode': cabin.code,
+                   'seats': []
                 }
                 
-            is_booked = seat.id in booked_seats
+            is_booked = seat.id in booked_seats    
+            
             cabins[cabin.id]['seats'].append({
                 'id': seat.id,
-                'code': seat.code,
-                'is_booked': is_booked
+                'status': seat.status,   
+                'isReserved': seat.status == 'RESERVED',
+                'isBooked': is_booked
             })
+        
+        
+            result = []
+        
+            for cabin in cabins.values():
+             obj = {
+                'id': cabin['id'],
+                'locationId': cabin['locationId'],
+                'cabinName': cabin['cabinName'],
+                'cabinCode': cabin['cabinCode'],
+                'totalSeats': len(cabin['seats']),
+                'availableSeats': len([seat for seat in cabin['seats'] if not seat['isBooked']]),
+                'seats': cabin['seats']
+            }
             
+            result.append(obj)
+         
         return Response({
-            'data': list(cabins.values()) 
+            'message': 'Available seats fetched successfully',
+            'data': result
         })
 
         
