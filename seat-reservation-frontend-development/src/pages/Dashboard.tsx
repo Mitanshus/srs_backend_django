@@ -703,7 +703,8 @@ const DashBoard = () => {
     try {
       setIsLoader(true);
       let response = await getOccupiedStatus({ user_id: id });
-      if (response?.isFound == false) {
+
+      if (response?.data?.isFound == false) {
         setIsFound(true);
         return;
       }
@@ -723,7 +724,7 @@ const DashBoard = () => {
         email: selectedUser.email,
       });
       console.log(is_schedule_restricted, "******");
-      setIs_Schedule_Restricted(is_schedule_restricted);
+      setIs_Schedule_Restricted(false);
       setIsLoader(false);
     } catch (error) {
       console.log("error while checking", error);

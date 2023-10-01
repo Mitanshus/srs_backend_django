@@ -163,7 +163,7 @@ export const getAllLocations = async ({
 		return data;
 	} catch (error: any) {
 		console.log("Error fetching locations:", error);
-		showWarningToast(error.response.data.message);
+		showWarningToast(error.response?.data?.message);
 		throw error;
 	}
 };
