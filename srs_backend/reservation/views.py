@@ -63,7 +63,7 @@ class AvailableSeatsView(APIView):
         ).select_related('cabin')
         
         cabins = {}
-        
+        result = []
         for seat in seats:
             cabin = seat.cabin
             
@@ -86,7 +86,7 @@ class AvailableSeatsView(APIView):
             })
         
         
-            result = []
+            
         
             for cabin in cabins.values():
              obj = {

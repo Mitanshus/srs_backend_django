@@ -724,7 +724,7 @@ const DashBoard = () => {
         email: selectedUser.email,
       });
       console.log(is_schedule_restricted, "******");
-      setIs_Schedule_Restricted(false);
+      setIs_Schedule_Restricted(is_schedule_restricted);
       setIsLoader(false);
     } catch (error) {
       console.log("error while checking", error);
