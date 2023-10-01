@@ -6,7 +6,6 @@ from company.models import Company
 from reservation.models import Reservations
 from cabin.serializer import cabin_serializer
 from seat.models import Seat
-from seat.serializer import seat_serializer
 from user.models import User
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -52,45 +51,37 @@ class AvailableSeatsView(APIView):
         end_datetime = datetime.strptime(end_date, "%Y-%m-%d %H:%M")
         
         booked_seats = Reservations.objects.filter(
-            reservation_start_date__lt=start_datetime, 
-            reservation_end_date__gt=end_datetime
-        ).values_list('seat_id', flat=True)
-
+            Q(reservation_start_date__lt=end_datetime, 
+              reservation_end_date__gte=start_datetime) |
+            Q(reservation_start_date__lte=start_datetime,
+              reservation_end_date__gte=end_datetime),  
+            status='BOOKED'
+        ).values_list('seat_id', flat=True)  
+        
         seats = Seat.objects.filter(
             cabin__location_id=location_id
         ).select_related('cabin')
         
-        serialized_seats = seat_serializer(seats, many=True).data
-        
         cabins = {}
-        
-        for seat in serialized_seats:
-            cabin = seat['cabin']
-            if cabin['id'] not in cabins:
-                cabins[cabin['id']] = {
-                    'id': cabin['id'], 
-                    'cabinName': cabin['name'],
-                    'cabinCode': cabin['code'],
-                    'seats': []
+        for seat in seats:
+            cabin = seat.cabin
+            
+            if cabin.id not in cabins:
+                cabins[cabin.id] = {
+                    'cabin': cabin_serializer(cabin).data,
+                    'seats': []    
                 }
                 
-            is_booked = seat['id'] in booked_seats
-            
-            cabins[cabin['id']]['seats'].append({
-                'id': seat['id'],
-                'isBooked': is_booked
+            is_booked = seat.id in booked_seats
+            cabins[cabin.id]['seats'].append({
+                'id': seat.id,
+                'code': seat.code,
+                'is_booked': is_booked
             })
             
-        data = [{
-            'id': c['id'],
-            'cabinName': c['cabinName'],
-            'cabinCode': c['cabinCode'],
-            'noOfSeats': len(c['seats']),
-            'seatsAvailable': len([s for s in c['seats'] if not s['isBooked']]),
-            'seats': c['seats']
-        } for c in cabins.values()]
-        
-        return Response(data)
+        return Response({
+            'data': list(cabins.values()) 
+        })
 
         
 class DashboardSeatsView(APIView):
