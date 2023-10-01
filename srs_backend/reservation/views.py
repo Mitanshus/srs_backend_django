@@ -4,6 +4,7 @@ from cabin.models import Cabin
 from django.db.models import Q
 from company.models import Company
 from reservation.models import Reservations
+from cabin.serializer import cabin_serializer
 from seat.models import Seat
 from user.models import User
 from rest_framework.response import Response
@@ -44,72 +45,66 @@ class delete_reservation_view(APIView):
         
 class AvailableSeatsView(APIView):
 
-  def get(self, request, company_id, location_id, start_date, end_date):
-  
-    try:
-    
-      start_datetime = datetime.strptime(start_date, "%Y-%m-%d")  
-      end_datetime = datetime.strptime(end_date, "%Y-%m-%d")
-      
-      company = Company.objects.get(id=company_id)
-      
-      # Get all cabins for this location
-      cabins = Cabin.objects.filter(location_id=location_id)  
-      
-      # Get list of locations from cabins
-      locations = [cabin.location_id for cabin in cabins]  
-      
-      booked_reservations = Reservations.objects.filter(
-        Q(reservation_start_date__lt=end_datetime, reservation_end_date__gte=start_datetime) | 
-        Q(reservation_start_date__lte=start_datetime, reservation_end_date__gte=end_datetime),
-        status='BOOKED'
-      ).values_list('seat_id', flat=True)
-
-      available_seats = Seat.objects.filter(cabin__in=cabins).values()
-      
-      cabins_with_seats = {}
-      for seat in available_seats:
-            
-        cabin = cabins.get(id=seat['cabin_id'])
-            
-        if seat['cabin_id'] not in cabins_with_seats:
-            
-          cabins_with_seats[seat['cabin_id']] = {
-            "Cabin": {
-              "id": cabin.id,
-              "location_id": cabin.location_id,
-              "name": cabin.name,  
-              "code": cabin.code
-            },
-            "Seats": []
-          }
-          
-        is_partially_booked = Reservations.objects.filter(
-          seat_id=seat['id'],
-          reservation_start_date__lt=end_datetime,
-          reservation_end_date__gt=start_datetime
-        ).exists()
-
-        is_reserved = seat['status'] == 'RESERVED'
+    def get(self, request, company_id, location_id, start_date, end_date):
         
-        cabins_with_seats[seat['cabin_id']]['Seats'].append({
-          "id": seat['id'],
-          "status": seat['status'],
-          "cabin_id": seat['cabin_id'], 
-          "code": seat['code'],
-          "isBooked": is_partially_booked,
-          "isReserved": is_reserved 
+        start_datetime = datetime.strptime(start_date, "%Y-%m-%d %H:%M")
+        end_datetime = datetime.strptime(end_date, "%Y-%m-%d %H:%M")
+        
+        booked_seats = Reservations.objects.filter(
+            Q(reservation_start_date__lt=end_datetime, 
+              reservation_end_date__gte=start_datetime) |
+            Q(reservation_start_date__lte=start_datetime,
+              reservation_end_date__gte=end_datetime),  
+            status='BOOKED'
+        ).values_list('seat_id', flat=True)  
+        
+        seats = Seat.objects.filter(
+            cabin__location_id=location_id
+        ).select_related('cabin')
+        
+        cabins = {}
+        
+        for seat in seats:
+            cabin = seat.cabin
+            
+            if cabin.id not in cabins:
+                cabins[cabin.id] = {
+                   'id': cabin.id,  
+                   'locationId': cabin.location_id.id,
+                   'cabinName': cabin.name,
+                   'cabinCode': cabin.code,
+                   'seats': []
+                }
+                
+            is_booked = seat.id in booked_seats    
+            
+            cabins[cabin.id]['seats'].append({
+                'id': seat.id,
+                'status': seat.status,   
+                'isReserved': seat.status == 'RESERVED',
+                'isBooked': is_booked
+            })
+        
+        
+            result = []
+        
+            for cabin in cabins.values():
+             obj = {
+                'id': cabin['id'],
+                'locationId': cabin['locationId'],
+                'cabinName': cabin['cabinName'],
+                'cabinCode': cabin['cabinCode'],
+                'totalSeats': len(cabin['seats']),
+                'availableSeats': len([seat for seat in cabin['seats'] if not seat['isBooked']]),
+                'seats': cabin['seats']
+            }
+            
+            result.append(obj)
+         
+        return Response({
+            'message': 'Available seats fetched successfully',
+            'data': result
         })
-
-      result = list(cabins_with_seats.values())
-      
-      return Response({
-        "message": "Available seats fetched successfully",
-        "data": result  
-      })
-
-    except Exception as e:
-      return Response({"error": str(e)}, status=500)
 
         
 class DashboardSeatsView(APIView):
