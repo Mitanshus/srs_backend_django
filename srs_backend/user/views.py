@@ -104,6 +104,8 @@ class view_all_users(APIView):
 
 class view_all_roles(APIView):
     def get(self, request, *args, **kwargs):
+        role_id = request.GET.get('company_id')
+
         roles = Role.objects.all()  # Retrieve all roles from the database
         serializer = RoleSerializer(roles, many=True)  # Serialize the roles
         return Response(serializer.data)
