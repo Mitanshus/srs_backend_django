@@ -169,3 +169,16 @@ class view_profile(APIView):
             }
         # serializer = UserSerializer(payload, many=True)  # Serialize the users
         return Response(payload, status=status.HTTP_200_OK)
+    
+class is_schedule_restricted(APIView):
+    def get(self, request, *args, **kwargs):
+        user_id = request.query_params.get('user_id')
+        users=User.objects.get(id=user_id)
+
+        payload= {
+            "is_schedule_restricted":users.primary_location.is_schedule_restricted
+            }
+        return Response(payload, status=status.HTTP_200_OK)
+       
+
+

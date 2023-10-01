@@ -10,6 +10,8 @@ urlpatterns = [
     path('login/',user_login.as_view()),
     path('delete/<uuid:pk>/',create_user.as_view()),
     path('delete/<uuid:pk>/',create_user.as_view()),
-    path('profile/',view_profile.as_view())
+    path('profile/',view_profile.as_view()),
+    path('isschedulerestricted/',view_profile.as_view())
+
 
 ]
