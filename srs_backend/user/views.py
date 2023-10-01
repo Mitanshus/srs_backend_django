@@ -172,9 +172,9 @@ class view_profile(APIView):
     
 class is_schedule_restricted(APIView):
     def get(self, request, *args, **kwargs):
-        user_id = request.query_params.get('user_id')
-        users=User.objects.get(id=user_id)
-
+        email = request.query_params.get('email')
+        users=User.objects.get(email=email)
+        
         payload= {
             "is_schedule_restricted":users.primary_location.is_schedule_restricted
             }

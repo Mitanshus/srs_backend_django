@@ -1,7 +1,7 @@
 import axios from "axios";
 import { showErrorToast, showWarningToast } from "../assets/toastify";
 
-var URL = import.meta.env.VITE_REACT_API_URL;
+var URL = 'http://localhost:8000/';
 
 
 export const usersWithoutSchedule = async ({ company_id }: { company_id: string }) => {
@@ -47,7 +47,7 @@ export const checkScheduleRestriction = async ({ email }: any) => {
     //const token = localStorage.getItem("token");
     try {
         const response = await axios.get(
-            `${URL}user/checkScheduleRestriction?email=${email}`,
+            `${URL}user/isschedulerestricted/?email=${email}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
