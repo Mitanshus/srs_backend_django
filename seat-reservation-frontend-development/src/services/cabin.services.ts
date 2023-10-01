@@ -101,7 +101,7 @@ export const deleteCabin = async (cabin_id: string) => {
   //const token = localStorage.getItem("token");
 
   try {
-    const res = await axios.delete(`${URL}admin/deleteCabin`, {
+    const res = await axios.delete(`${URL}cabin/delete/?cabin_id=${cabin_id}`, {
       data: { cabin_id: cabin_id },
       headers: {
         "Content-Type": "application/json",
