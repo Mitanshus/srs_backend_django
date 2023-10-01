@@ -151,15 +151,18 @@ export const getAllLocations = async ({
 }) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.get(`http://localhost:8000/location/viewalllocation/?company_id=${company_id}`, {
-			headers: {
-				"Content-Type": "application/json",
-				// //Authorization: token,: token,
-			},
-		});
+		const response = await axios.get(
+			`http://localhost:8000/location/viewalllocation/?company_id=${company_id}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					// //Authorization: token,: token,
+				},
+			}
+		);
 		const { data } = await response.data;
 		console.log(response.data);
-		
+
 		return data;
 	} catch (error: any) {
 		console.log("Error fetching locations:", error);
@@ -241,8 +244,8 @@ export const checkDeluser = async (employee_id: string) => {
 export const deletUser = async (employee_id: string | null) => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.delete(`${URL}admin/deleteEmployee`, {
-			data: { employee_id: employee_id },
+		const response = await axios.delete(`${URL}user/delete/${employee_id}/`, {
+			// data: { employee_id: employee_id },
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,
@@ -311,13 +314,16 @@ export const deleteLocation = async (location_id: string | undefined) => {
 	console.log("location id", location_id);
 
 	try {
-		const response = await axios.delete(`${URL}location/delete`, {
-			data: { location_id: location_id },
-			headers: {
-				"Content-Type": "application/json",
-				// //Authorization: token,: token,
-			},
-		});
+		const response = await axios.delete(
+			`${URL}location/delete/${location_id}`,
+			{
+				// data: { location_id: location_id },
+				headers: {
+					"Content-Type": "application/json",
+					// //Authorization: token,: token,
+				},
+			}
+		);
 
 		return response.data.message;
 	} catch (error: any) {
