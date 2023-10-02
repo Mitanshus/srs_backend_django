@@ -8,6 +8,7 @@ from .models import Role,User
 from company.models import Company
 from user_schedule.models import UserSchedule
 from user.serializer import UserDeleteSerializer, UserSerializer,RoleSerializer
+from location.serializer import LocationSerializer
 from rest_framework import status
 from django.contrib.auth import authenticate, login
 from rest_framework.decorators import  permission_classes
@@ -171,14 +172,16 @@ class view_profile(APIView):
         return Response(payload, status=status.HTTP_200_OK)
     
 class is_schedule_restricted(APIView):
-    def get(self, request, *args, **kwargs):
-        email = request.query_params.get('email')
-        users=User.objects.get(email=email)
-        
-        payload= {
-            "is_schedule_restricted":users.primary_location.is_schedule_restricted
-            }
-        return Response(payload, status=status.HTTP_200_OK)
+
+    # permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+       user = User.objects.filter(email=request.user.email).first()
+       if user:
+           location = LocationSerializer(user.primary_location).data
+           return Response(location)
+       else:
+           return Response({}, status=status.HTTP_404_NOT_FOUND)
        
 
 
