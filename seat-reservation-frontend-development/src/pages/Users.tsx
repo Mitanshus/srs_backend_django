@@ -281,13 +281,15 @@ const Users = () => {
     try {
       setIsLoading(true);
       const userData = await getAllUsers({ company_id });
+      console.log(userData);
+      
       const rowdata = userData.map((item: any, index: number) => {
         const {
           id,
           first_name,
           last_name,
           email,
-          Role,
+          role_name,
           Location,
           role_id,
           primary_location,
@@ -301,8 +303,8 @@ const Users = () => {
           first_name,
           last_name,
           email,
-          role: Role?.name,
-          location: Location?.name,
+          role: role_name,
+          location: primary_location,
           role_id,
           location_id: primary_location,
           min_days,
@@ -331,6 +333,8 @@ const Users = () => {
           label: name,
         };
       });
+      console.log(locationData);
+      
       setIsLoading(false);
       setLocation(locationData);
     } catch (error) {

@@ -128,14 +128,16 @@ export const getAllUsers = async ({ company_id }: { company_id: string }) => {
 export const getAllRoles = async () => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.get(`${URL}user/role/`, {
+		const response = await axios.get(`${URL}user/viewallroles/`, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,
 			},
 		});
-		const { data } = await response.data;
-		return data;
+		// const { data } = await response.data;
+		console.log(response);
+		
+		return response?.data;
 	} catch (error: any) {
 		console.log("Error fetching roles:", error);
 		showWarningToast(error.response.data.message);
