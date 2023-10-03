@@ -176,7 +176,9 @@ class is_schedule_restricted(APIView):
     # permission_classes = [IsAuthenticated]
     
     def get(self, request):
-       user = User.objects.filter(email=request.user.email).first()
+       email = request.query_params.get('email')
+       
+       user = User.objects.get(email=email)
        if user:
            location = LocationSerializer(user.primary_location).data
            return Response(location)
