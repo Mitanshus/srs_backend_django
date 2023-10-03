@@ -186,4 +186,28 @@ class is_schedule_restricted(APIView):
            return Response({}, status=status.HTTP_404_NOT_FOUND)
        
 
+class GetAllRolesView(APIView):
+
+    def get(self, request):
+        try:
+            if request.user.role == 'superadmin':
+                roles = Role.objects.exclude(name='superadmin')
+            
+            elif request.user.role == 'admin': 
+                roles = Role.objects.exclude(name__in=['superadmin','admin'])
+
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+            serializer = RoleSerializer(roles, many=True)
+            return Response({
+                'message': 'Roles fetched successfully',
+                'data': serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except:
+            return Response({
+                'error': 'Internal server error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
