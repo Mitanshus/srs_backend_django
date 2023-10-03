@@ -231,7 +231,7 @@ class ConfirmPresenceBtnView(APIView):
             )
 
             if not existing_reservation.exists():
-                return Response({'message': 'No Reservation found for current time.', 'isFound': False}, status=404)
+                return Response({'message': 'No Reservation found for current time.', 'isFound': False}, status=200)
 
             reservation_id = existing_reservation[0].id
 
@@ -248,4 +248,4 @@ class ConfirmPresenceBtnView(APIView):
 
         except Exception as e:
             print('Error while handling confirm presence button:', e)
-            return Response({'error': 'Internal server error'}, status=500)
+            return Response({'error': 'Internal server error'}, status=404)
