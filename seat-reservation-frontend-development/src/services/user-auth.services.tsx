@@ -128,7 +128,7 @@ export const getAllUsers = async ({ company_id }: { company_id: string }) => {
 export const getAllRoles = async () => {
 	//const token = localStorage.getItem("token");
 	try {
-		const response = await axios.get(`${URL}role`, {
+		const response = await axios.get(`${URL}user/role/`, {
 			headers: {
 				"Content-Type": "application/json",
 				// //Authorization: token,: token,

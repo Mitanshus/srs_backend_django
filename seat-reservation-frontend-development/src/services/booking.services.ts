@@ -141,6 +141,8 @@ export const getOccupiedStatus = async (data: any) => {
         },
       }
     );
+    console.log(response);
+    
     return await response.data;
   } catch (error: any) {
     console.error(error);

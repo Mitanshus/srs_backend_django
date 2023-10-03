@@ -704,7 +704,7 @@ const DashBoard = () => {
       setIsLoader(true);
       let response = await getOccupiedStatus({ user_id: id });
 
-      if (response?.data?.isFound == false) {
+      if (response?.data?.isFound == false || response?.data?.isFound == null) {
         setIsFound(true);
         return;
       }

@@ -55,7 +55,7 @@ export const checkScheduleRestriction = async ({ email }: any) => {
                 },
             }
         );
-        return await response.data.payload;
+        return await response.data;
     } catch (error: any) {
         console.log("Error while checking", error);
         showErrorToast(error.response.data.message);

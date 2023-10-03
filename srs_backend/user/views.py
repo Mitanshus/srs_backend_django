@@ -205,9 +205,9 @@ class GetAllRolesView(APIView):
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
 
-        except:
+        except Exception as e:
             return Response({
-                'error': 'Internal server error'
+                'error': e
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
